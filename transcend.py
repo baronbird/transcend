@@ -28,7 +28,7 @@ def process(word):
 	curr = ""
 	hyphen = False
 	for c in word:
-		if c in '"()\'’.,?!:;“—':
+		if c in '"()\'.,?!:;':
 			if len(curr) > 0:
 				word_list.append(curr)
 				curr = ""
@@ -59,8 +59,8 @@ if __name__ == "__main__":
 	outfile = sys.argv[2]
 
 	prev_word = None
-	for line in open(infile):
-		for token in line.strip().split():
+	for line in io.open(infile, "r", encoding="utf-8"):
+		for token in line.encode('utf-8').strip().split():
 			word_list = process(token)
 			for word in word_list:
 				if prev_word != None:
