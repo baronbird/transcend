@@ -1,18 +1,18 @@
 # transcend.py #
 # generate text network from a plain-text project gutenberg e-book
 
-import sys, re
+import sys, re, io
 
 class Graph():
 	def __init__(self):
 		self.edges = set()
-	
+
 	def add_edge(self, first, second):
 		forward = "{}\t{}".format(first, second)
 		reverse = "{}\t{}".format(second, first)
 		if forward not in self.edges and reverse not in self.edges:
 			self.edges.add(forward)
-	
+
 	def output(self, filename):
 		with open(filename, "w") as f:
 			for edge in self.edges:
@@ -52,7 +52,7 @@ def process(word):
 		word_list.append(curr)
 
 	return word_list
-	
+
 if __name__ == "__main__":
 	graph = Graph()
 	infile = sys.argv[1]
