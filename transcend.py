@@ -18,6 +18,11 @@ class Graph():
 			for edge in self.edges:
 				f.write(edge + "\n")
 
+def usage(exit_code=0):
+	print "Usage: {} INPUT_FILE OUPUT_FILE".format(sys.argv[0])
+	sys.exit(exit_code)
+
+
 def process(word):
 	word_list = []
 
@@ -54,6 +59,10 @@ def process(word):
 	return word_list
 
 if __name__ == "__main__":
+
+	if len(sys.argv) != 3:
+		usage(1)
+		
 	graph = Graph()
 	infile = sys.argv[1]
 	outfile = sys.argv[2]
