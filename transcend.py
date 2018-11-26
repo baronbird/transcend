@@ -7,23 +7,29 @@ import argparse
 class Graph():
     def __init__(self, number=False):
         self.edges = set()
-        self.nodes = {}
+        self.nodeMap = {}
+        self.numNodes = 0
+        self.nodes = set()
         self.number = number
 
     def add_edge(self, first, second):
         if first == second:
             return
-            
-        if self.number:
-            # map each word to a number
-            if first not in self.nodes.keys():
-                self.nodes[first] = len(self.nodes.keys())
-            if second not in self.nodes.keys():
-                self.nodes[second] = len(self.nodes.keys())
 
-            # change word to number
-            first = self.nodes[first]
-            second = self.nodes[second]
+        if self.number:
+            if first not in self.nodes:
+                self.nodes.add(first)
+                self.numNodes = self.numNodes + 1
+                self.nodeMap[first] = self.numNodes
+            if second not in self.nodes:
+                self.nodes.add(second)
+                self.numNodes = self.numNodes + 1
+                self.nodeMap[second] = self.numNodes
+
+            first = self.nodeMap[first]
+            second = self.nodeMap[second]
+
+
 
         forward = "{}\t{}".format(first, second)
         reverse = "{}\t{}".format(second, first)
@@ -33,7 +39,7 @@ class Graph():
     def output(self, filename):
         with open(filename, "w") as f:
             if self.number:
-                f.write("{}\t{}\n".format(len(self.nodes.keys()), len(self.edges)))
+                f.write("{}\t{}\n".format(self.numNodes, len(self.edges)))
             for edge in self.edges:
                 f.write(edge + "\n")
 
