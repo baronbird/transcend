@@ -20,11 +20,11 @@ class Graph():
             if first not in self.nodes:
                 self.nodes.add(first)
                 self.numNodes = self.numNodes + 1
-                self.nodeMap[first] = self.numNodes
+                self.nodeMap[first] = self.numNodes - 1
             if second not in self.nodes:
                 self.nodes.add(second)
                 self.numNodes = self.numNodes + 1
-                self.nodeMap[second] = self.numNodes
+                self.nodeMap[second] = self.numNodes - 1
 
             first = self.nodeMap[first]
             second = self.nodeMap[second]
