@@ -1,6 +1,6 @@
 '''
 This script runs orca on every file in a specific subdirectory structure as follows:
-	main_dir 
+	main_dir
 	|
 	|------ subdirectory
 	|	|
@@ -14,7 +14,9 @@ This script runs orca on every file in a specific subdirectory structure as foll
 	.
 
 The resulting graphlt counts will be placed in the same structure with the same subdirectory names, but with the name of main_dir
-specified by command line argument.
+specified by command line argument:
+
+python runOrca.py main_dir output_dir
 '''
 
 import os
