@@ -1,8 +1,28 @@
-# transcend.py #
-# generate text network from a plain-text project gutenberg e-book
+'''
+This script runs generates a network for every file in a specific subdirectory structure as follows:
+	main_dir
+	|
+	|------ subdirectory
+	|	|
+	|	|----- texts
+	|	|
+	|------ another subdirectory
+	|	|
+	|	|----- more texts
+	.
+	.
+	.
+
+The resulting networks counts will be placed in the same structure with the same subdirectory names, but with the name of main_dir
+specified by command line argument:
+
+python transcend.py main_dir output_dir
+'''
 
 import sys, re, io
 import argparse
+import glob
+import os
 
 class Graph():
     def __init__(self, number=False):
@@ -82,8 +102,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Generate network from text file')
 
-    parser.add_argument('infile', metavar='INPUT_FILE', type=str)
-    parser.add_argument('outfile', metavar='OUTPUT_FILE', type=str)
+    parser.add_argument('indir', metavar='INPUT_DIR', type=str)
+    parser.add_argument('outdir', metavar='OUTPUT_DIR', type=str)
     parser.add_argument('--number', '-n', action='store_true')
 
     args = parser.parse_args()
@@ -91,12 +111,20 @@ if __name__ == "__main__":
     graph = Graph(args.number)
 
     prev_word = None
-    for line in io.open(args.infile, "r", encoding="utf-8"):
-        for token in line.encode('utf-8').strip().split():
-            word_list = process(token)
-            for word in word_list:
-                if prev_word != None:
-                    graph.add_edge(prev_word, word)
-                prev_word = word
+    for f in glob.glob('{}/*/*.txt'.format(args.indir)):
+        for line in io.open(f, "r", encoding="utf-8"):
+            for token in line.encode('utf-8').strip().split():
+                word_list = process(token)
+                for word in word_list:
+                    if prev_word != None:
+                        graph.add_edge(prev_word, word)
+                    prev_word = word
 
-    graph.output(args.outfile)
+        newFile = f.replace(args.indir, args.outdir)
+        newDir = os.path.dirname(newFile)
+        if not os.path.exists(newDir):
+            print "Creating directory {}".format(newDir)
+            os.makedirs(newDir)
+
+        print "Created {}".format(newFile)
+        graph.output(newFile)

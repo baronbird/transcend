@@ -28,7 +28,7 @@ if len(sys.argv) != 3:
 	sys.exit(1)
 
 for f in glob.glob('{}/*/*'.format(sys.argv[1])):
-	out = f.replace('testNets', sys.argv[2])
+	out = f.replace(sys.argv[1], sys.argv[2])
 	if not os.path.exists(os.path.dirname(out)):
 		os.makedirs(os.path.dirname(out))
 	os.system('./orca 5 {} {}'.format(f, out))
