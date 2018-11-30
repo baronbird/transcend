@@ -27,7 +27,7 @@ if len(sys.argv) != 3:
 	print "Usage: {} INPUT_DIR OUTPUT_DIR".format(sys.argv[0])
 	sys.exit(1)
 
-for f in glob.glob('{}/*/*'.format(sys.argv[1])):
+for f in glob.glob('{}/*/*.txt'.format(sys.argv[1])):
 	out = f.replace(sys.argv[1], sys.argv[2])
 	if not os.path.exists(os.path.dirname(out)):
 		os.makedirs(os.path.dirname(out))
