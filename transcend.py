@@ -56,12 +56,17 @@ class Graph():
         if forward not in self.edges and reverse not in self.edges:
             self.edges.add(forward)
 
-    def output(self, filename):
+    def output(self, filename, leda):
         with open(filename, "w") as f:
             if self.number:
                 f.write("{}\t{}\n".format(self.numNodes, len(self.edges)))
             for edge in self.edges:
                 f.write(edge + "\n")
+	if leda:
+		ledaFile = filename.replace('.txt', '.gw')
+		print "Converting {} to {}".format(filename, ledaFile)
+		os.system("./list2leda {} > {}".format(filename, ledaFile))
+		os.remove(filename)
 
 def process(word):
     word_list = []
@@ -105,6 +110,7 @@ if __name__ == "__main__":
     parser.add_argument('indir', metavar='INPUT_DIR', type=str)
     parser.add_argument('outdir', metavar='OUTPUT_DIR', type=str)
     parser.add_argument('--number', '-n', action='store_true')
+    parser.add_argument('--leda', '-l', action='store_true')
 
     args = parser.parse_args()
 
@@ -126,5 +132,8 @@ if __name__ == "__main__":
             print "Creating directory {}".format(newDir)
             os.makedirs(newDir)
 
-        print "Created {}".format(newFile)
-        graph.output(newFile)
+	if args.leda:
+        	print "Created {}".format(newFile.replace('.txt', '.gw'))
+	else:
+        	print "Created {}".format(newFile)
+        graph.output(newFile, args.leda)
