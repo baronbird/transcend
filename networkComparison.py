@@ -81,7 +81,7 @@ import time
 import networkx as nx
 import multiprocessing, Queue
 
-from scipy import stats
+# from scipy import stats
 
 """
 	Functions
@@ -94,7 +94,7 @@ def readSignatures(file):
 	fRead = open(file, 'r')
 	
 	for line in fRead:
-		signDict.append([float(value) for value in line.strip().split(' ')[-73:]])
+		signDict.append([float(value) for value in line.strip().split(' ')[-15:]])
 		
 	fRead.close()
 	
@@ -112,7 +112,7 @@ def formatSignatures(signList, testMode):
 			log = sign
 		elif testMode == 7:		# GCD-58
 			eliminateList = [3, 5, 7, 14, 16, 17, 20, 21, 23, 26, 28, 38, 44, 47, 69, 71, 72]
-			log = [sign[i] for i in range(73) if i not in eliminateList]
+			log = [sign[i] for i in range(15) if i not in eliminateList]
 		elif testMode == 10:	# GCD-11
 			eliminateList = [3, 12, 13, 14]
 			log = [sign[i] for i in range(15) if i not in eliminateList]
@@ -121,6 +121,24 @@ def formatSignatures(signList, testMode):
 	
 	return formattedSignatures
 
+# User defined function written by Joe Kiminger to account for lack of scipy package
+def rankData(data):
+	ranks = {}
+	freq = {}
+	
+	for x in data:
+		freq[x] = freq.setdefault(x, 0) + 1
+	
+	s = sorted(data)
+	rank = 1
+	while rank <= len(data):
+		ranks[s[rank - 1]] = float(rank + rank + freq[s[rank - 1]] - 1) / 2
+			
+		rank = rank + freq[s[rank - 1]]
+	
+	return [ranks[x] for x in data]
+	
+		
 # Compute the correlation matrix without isnan values by adding a dummy signature
 def computeCorrelMat(formattedSigns):
 	
@@ -132,7 +150,7 @@ def computeCorrelMat(formattedSigns):
 	# Compute the ranking for the Spearman's correlation coefficient computation
 	rankList = []
 	for i in range(length):
-		rankList.append(stats.mstats.rankdata([val[i] for val in formattedSigns]))
+		rankList.append(rankdata([val[i] for val in formattedSigns]))
 		
 	correlMat = numpy.corrcoef(rankList, rowvar = 1)
 		
@@ -326,7 +344,7 @@ def getGraphletFreq(signList):
 def scaleGraphletDists(signatures):
 	distributions = []
 	
-	for i in range(73):
+	for i in range(15):
 		# Get the distribution
 		values = {}
 		for val in signatures:
@@ -501,7 +519,7 @@ def computeGDDAgreement(index1, index2):
 	signs2 = readDist(index2)
 	
 	
-	for i in range(73):
+	for i in range(15):
 		values1 = signs1[i]
 		values2 = signs2[i]
 		
@@ -524,7 +542,7 @@ def computeGDDAgreement(index1, index2):
 		orbitDist.append(1 - ((1/math.sqrt(2)) * math.sqrt(sumDistances)) )
 	
 	gdda_distance = numpy.mean(orbitDist)
-	gddg_distance = stats.gmean(orbitDist)
+	gddg_distance = 0
 	
 	return [gdda_distance, gddg_distance]
 
@@ -735,7 +753,7 @@ class NetworkPropertyGetter(multiprocessing.Process):
 			
 				if self.mode == 4:
 					prop1	= nx.degree_histogram(network)
-					prop2	= numpy.mean(network.degree().values())
+					prop2	= numpy.mean(dict(nx.degree(network)).values())
 					netProp = (prop1, prop2)
 				elif self.mode == 5:
 					netProp = nx.average_clustering(network)
