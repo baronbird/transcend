@@ -114,10 +114,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    graph = Graph(args.number)
 
     prev_word = None
     for f in glob.glob('{}/*/*.txt'.format(args.indir)):
+    	graph = Graph(args.number)
         for line in io.open(f, "r", encoding="utf-8"):
             for token in line.encode('utf-8').strip().split():
                 word_list = process(token)
